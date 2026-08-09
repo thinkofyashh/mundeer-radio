@@ -24,7 +24,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .road-canvas { position: fixed; z-index: 0; inset: 0; background: radial-gradient(circle at 50% 34%, #9a6641 0, #433020 34%, #071521 78%); }
 .memory-backdrops { position: fixed; z-index: 1; inset: 0; pointer-events: none; overflow: hidden; }
 .memory-backdrop { position: absolute; inset: -3%; opacity: 0; background-position: center; background-size: cover; filter: saturate(1.12) contrast(1.08); mix-blend-mode: soft-light; transform: scale(1.045); transition: opacity 1.1s ease, transform 7s ease; }
-.memory-backdrop.active { opacity: .42; transform: scale(1); animation: backdrop-arrive 1.1s ease both; }
+.memory-backdrop.active { opacity: .28; transform: scale(1); animation: backdrop-arrive 1.1s ease both; }
 .memory-backdrops::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 60%, transparent 20%, rgba(3,10,16,.45) 80%); }
 .road-grade { position: fixed; z-index: 2; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(4,13,22,.05), rgba(5,12,18,.04) 42%, rgba(2,7,11,.72)), radial-gradient(circle at 50% 45%, transparent 18%, rgba(2,8,14,.66) 110%); }
 .print-texture { position: fixed; z-index: 95; inset: 0; pointer-events: none; opacity: .24; mix-blend-mode: soft-light; background-image: radial-gradient(circle,rgba(244,222,180,.55) 0 1px,transparent 1.3px),repeating-linear-gradient(0deg,transparent 0 3px,rgba(1,7,12,.42) 4px); background-size: 5px 5px,100% 4px; animation: grain-shift .25s steps(2) infinite; }
@@ -169,7 +169,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .track-list > button i { position: absolute; right: 10px; bottom: 5px; color: #e1a55c; font-size: 5px; font-style: normal; letter-spacing: .12em; }
 
 @keyframes grain-shift { to { transform: translate(1px,-1px); } }
-@keyframes backdrop-arrive { from { opacity: 0; transform: scale(1.045); } to { opacity: .42; transform: scale(1); } }
+@keyframes backdrop-arrive { from { opacity: 0; transform: scale(1.045); } to { opacity: .28; transform: scale(1); } }
 @keyframes pulse { 50% { opacity: .32; } }
 @keyframes scroll-bob { 50% { transform: translateY(6px); } }
 @keyframes download-flash { 50% { filter: brightness(1.22); } }

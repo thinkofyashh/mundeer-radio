@@ -167,7 +167,7 @@ function WhiteHatchback({ started, reducedMotion }: Omit<JourneyProps, "progress
   );
 
   return (
-    <group ref={car} position={[0, -0.14, 3.2]} rotation-y={Math.PI}>
+    <group ref={car} position={[0, -0.08, 0.45]}>
       <RoundedBox args={[2.45, 0.72, 3.85]} radius={0.28} smoothness={5} position={[0, 0.26, 0]} castShadow>
         <meshStandardMaterial color="#ece9df" metalness={0.18} roughness={0.44} />
       </RoundedBox>
@@ -177,6 +177,10 @@ function WhiteHatchback({ started, reducedMotion }: Omit<JourneyProps, "progress
       <mesh position={[0, 0.92, 0.91]} rotation-x={-0.14}>
         <planeGeometry args={[1.72, 0.57]} />
         <meshStandardMaterial color="#10191e" metalness={0.45} roughness={0.18} />
+      </mesh>
+      <mesh position={[0, 0.88, 0.942]} rotation-x={-0.14}>
+        <boxGeometry args={[0.92, 0.025, 0.025]} />
+        <meshBasicMaterial color="#070b0d" />
       </mesh>
       <mesh position={[-1.04, 0.9, -0.22]} rotation-y={-Math.PI / 2}>
         <planeGeometry args={[1.33, 0.48]} />
@@ -189,6 +193,10 @@ function WhiteHatchback({ started, reducedMotion }: Omit<JourneyProps, "progress
       <mesh position={[0, 0.37, 1.94]}>
         <boxGeometry args={[1.66, 0.18, 0.05]} />
         <meshStandardMaterial color="#d7d3c8" />
+      </mesh>
+      <mesh position={[0, -0.02, 1.98]}>
+        <boxGeometry args={[2.08, 0.14, 0.08]} />
+        <meshStandardMaterial color="#202326" roughness={0.65} />
       </mesh>
       <mesh position={[0, 0.13, 1.97]}>
         <boxGeometry args={[0.72, 0.22, 0.04]} />
@@ -241,7 +249,7 @@ function CameraRide({ progress, started, reducedMotion }: JourneyProps) {
     const pointerX = reducedMotion ? 0 : state.pointer.x * 0.22;
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointerX, 0.035);
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, 2.8 + (started && !reducedMotion ? Math.sin(t * 1.5) * 0.025 : 0), 0.06);
-    camera.lookAt(pointerX * 0.18, 0.55, -8);
+    camera.lookAt(pointerX * 0.18, 0.18, -8);
   });
   return <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 2.8, 8.2]} fov={52} near={0.1} far={220} />;
 }

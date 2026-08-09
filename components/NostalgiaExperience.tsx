@@ -109,10 +109,11 @@ function RoadTrip() {
         });
         ScrollTrigger.create({
           trigger: chapter,
-          start: "top center",
-          end: "bottom center",
-          onEnter: () => setActiveChapter(index),
-          onEnterBack: () => setActiveChapter(index),
+          start: "top 62%",
+          end: "bottom 38%",
+          onToggle: (self) => {
+            if (self.isActive) setActiveChapter(index);
+          },
         });
       });
     }, root);
