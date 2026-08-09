@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { stations } from "@/data/stations";
-import { tracksForStation, type Track } from "@/data/tracks";
+import { tracks, tracksForStation, type Track } from "@/data/tracks";
 import type { YouTubePlayer } from "@/lib/youtube";
 
 type MusicContextValue = {
@@ -22,6 +22,7 @@ type MusicContextValue = {
   previousTrack: () => void;
   setVolume: (value: number) => void;
   changeStation: (id: string) => void;
+  selectTrack: (id: string) => void;
   seek: (value: number) => void;
   enter: () => void;
 };
@@ -144,6 +145,19 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     setStationIndex(next);
     setTrackIndex(0);
   }, [tune]);
+  const selectTrack = useCallback((id: string) => {
+    const selected = tracks.find((track) => track.id === id);
+    if (!selected) return;
+    const nextStationIndex = stations.findIndex((station) => station.id === selected.station);
+    const nextPlaylist = tracksForStation(selected.station);
+    const nextTrackIndex = nextPlaylist.findIndex((track) => track.id === id);
+    if (nextStationIndex < 0 || nextTrackIndex < 0) return;
+    tune();
+    setStationIndex(nextStationIndex);
+    setTrackIndex(nextTrackIndex);
+    setHasEntered(true);
+    setIsPlaying(true);
+  }, [tune]);
   const seek = useCallback((value: number) => {
     playerRef.current?.seekTo(value, true);
     setCurrentTime(value);
@@ -157,10 +171,10 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(() => ({
     currentTrack, currentStation, isPlaying, volume: volumeState, duration, currentTime,
     playerReady, hasEntered, isTuning, play, pause, togglePlay, nextTrack, previousTrack,
-    setVolume, changeStation, seek, enter,
+    setVolume, changeStation, selectTrack, seek, enter,
   }), [currentTrack, currentStation, isPlaying, volumeState, duration, currentTime, playerReady,
     hasEntered, isTuning, play, pause, togglePlay, nextTrack, previousTrack, setVolume,
-    changeStation, seek, enter]);
+    changeStation, selectTrack, seek, enter]);
 
   return <MusicContext.Provider value={value}>{children}</MusicContext.Provider>;
 }

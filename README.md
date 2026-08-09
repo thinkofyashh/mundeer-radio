@@ -1,6 +1,6 @@
 # Mafia Mundeer Radio
 
-An immersive Indian nostalgia radio that turns an early-2010s bedroom desk into a playable music experience. Tune through fictional FM stations, control playback from a tactile 3D radio, and rediscover the era of Bluetooth transfers, cyber cafés, memory cards, college rides, and 50 KB/s downloads.
+An immersive Indian nostalgia radio built as a moving 2011 night drive. Ride behind a white youth-era hatchback, keep one radio frequency running, and rediscover Bluetooth transfers, cyber cafés, cricket nights, recharge shops, and the songs that tied them together.
 
 ## Screenshots
 
@@ -8,15 +8,15 @@ An immersive Indian nostalgia radio that turns an early-2010s bedroom desk into 
 
 ## Features
 
-- Cinematic fullscreen 2011 Indian bedroom and cyber-café atmosphere
-- Interactive React Three Fiber radio with animated tuning and volume controls
-- Seven nostalgia stations with local TypeScript track metadata
-- Official YouTube IFrame Player API playback inside the old monitor
+- Cinematic scroll-linked road trip with a stylized white hatchback and black alloys
+- Animated road markings, lamps, roadside shops, wheel movement, camera sway, and dusk-to-night grading
+- One Mundeer Radio frequency with the complete local TypeScript track catalog
+- User-supplied halftone memory artwork blended into each chapter
+- Official YouTube IFrame Player API playback inside the fixed dashboard console
 - Play, pause, next, previous, seek, station, and volume controls
 - Keyboard shortcuts and reduced-motion support
-- Dedicated mobile composition with simplified secondary props
-- Bluetooth, USB, CD, desktop-folder, and download-window Easter eggs
-- Optional interface sounds synthesized in the browser
+- Responsive mobile composition with reduced camera movement
+- Cyber café, Bluetooth, cricket, recharge, and late-night-drive memory chapters
 - Realtime listener-presence configuration point for a future Supabase connection
 - Future-facing “Leave a memory” interface without persistence or authentication
 
@@ -78,22 +78,18 @@ The optimized application is emitted to `.next/`.
 ```text
 app/                    Next.js route, metadata, and global styling
 components/
-  nostalgia/            Desktop and physical-prop Easter eggs
-  player/               Central playback state and YouTube player
-  radio/                Station selector and frequency display
-  scene/                Three.js radio scene
-  ui/                   Entry and listener-presence interfaces
-data/                   Station and track metadata
-hooks/                  Playback and interface-sound hooks
+  player/               Central playback state, dashboard player, and song drawer
+  scene/                Three.js car and moving road scene
+data/                   Single-station and track metadata
 lib/                    YouTube types and playback utilities
-public/                 Social preview and future media directories
+public/                 Social previews and illustrated memory assets
 ```
 
 ## Music and playback architecture
 
-`MusicProvider` is the single source of truth for the current track, station, playback state, volume, timing, and player readiness. The radio scene and regular React controls consume the same provider and never call the YouTube API directly.
+`MusicProvider` is the single source of truth for the current track, playback state, volume, timing, and player readiness. The fixed dashboard console consumes that provider and never calls the YouTube API directly.
 
-Track metadata and YouTube video IDs live in `data/tracks.ts`. Audio is neither downloaded nor proxied: the official embedded player remains visible inside the computer monitor and handles all media playback. Station changes select a local playlist, animate the frequency display, add a brief synthesized static effect, and load the next embedded video.
+Track metadata and YouTube video IDs live in `data/tracks.ts`. Audio is neither downloaded nor proxied: the official embedded player remains visible in the dashboard and handles all media playback. The single Mundeer Radio playlist lets previous and next controls travel through the full catalog without changing stations.
 
 ## Deployment
 
