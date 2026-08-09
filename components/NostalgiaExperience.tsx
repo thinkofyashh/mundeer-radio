@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { DrivePlayer } from "@/components/player/DrivePlayer";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { HiFiPlayer } from "@/components/player/HiFiPlayer";
 import { MusicProvider, useMusic } from "@/components/player/MusicProvider";
-import { RoadJourney } from "@/components/scene/RoadJourney";
 
 const chapters = [
   {
@@ -59,7 +56,7 @@ const chapters = [
 ];
 
 const chapterImages = [
-  "/assets/memories/cyber-street.jpg",
+  "/assets/hero-car-v3.jpg",
   "/assets/memories/cyber-cafe.jpg",
   "/assets/memories/rooftop-sharing.jpg",
   "/assets/memories/world-cup.jpg",
@@ -70,74 +67,49 @@ const chapterImages = [
 function RoadTrip() {
   const music = useMusic();
   const root = useRef<HTMLElement>(null);
-  const progress = useRef(0);
   const [started, setStarted] = useState(false);
   const [activeChapter, setActiveChapter] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [playerExpanded, setPlayerExpanded] = useState(false);
 
   useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 720px)");
-    const update = () => setReducedMotion(query.matches);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
+    const sections = Array.from(root.current?.querySelectorAll<HTMLElement>(".drive-chapter") ?? []);
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      const index = sections.indexOf(visible.target as HTMLElement);
+      if (index >= 0) setActiveChapter(index);
+    }, { rootMargin: "-28% 0px -32%", threshold: [0.12, 0.35, 0.62] });
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
-  useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    const scope = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: root.current,
-        start: "top top",
-        end: "bottom bottom",
-        onUpdate: (self) => { progress.current = self.progress; },
-      });
+  const setExpanded = useCallback((expanded: boolean) => {
+    setPlayerExpanded(expanded);
+    document.body.classList.toggle("player-expanded", expanded);
+  }, []);
 
-      gsap.utils.toArray<HTMLElement>(".drive-chapter").forEach((chapter, index) => {
-        const card = chapter.querySelector(".chapter-card");
-        gsap.fromTo(card, { opacity: 0, y: 70, rotateX: 5 }, {
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: chapter,
-            start: "top 72%",
-            end: "top 38%",
-            scrub: reducedMotion ? false : 0.8,
-          },
-        });
-        ScrollTrigger.create({
-          trigger: chapter,
-          start: "top 62%",
-          end: "bottom 38%",
-          onToggle: (self) => {
-            if (self.isActive) setActiveChapter(index);
-          },
-        });
-      });
-    }, root);
-    return () => scope.revert();
-  }, [reducedMotion]);
+  useEffect(() => () => {
+    document.body.classList.remove("player-expanded");
+  }, []);
 
   const beginRide = () => {
     setStarted(true);
+    setExpanded(true);
     music.enter();
   };
 
   return (
     <main ref={root} className={`road-trip ${started ? "ride-started" : ""}`}>
-      <RoadJourney progress={progress} started={started} reducedMotion={reducedMotion} />
-      <div className="memory-backdrops" aria-hidden="true">
-        <div key={chapterImages[activeChapter]} className="memory-backdrop active" style={{ backgroundImage: `url(${chapterImages[activeChapter]})` }} />
+      <div className="journey-backdrop" aria-hidden="true">
+        <div key={chapterImages[activeChapter]} style={{ backgroundImage: `url(${chapterImages[activeChapter]})` }} />
       </div>
       <div className="road-grade" aria-hidden="true" />
       <div className="print-texture" aria-hidden="true" />
 
       <header className="trip-header">
-        <a href="#pickup" className="trip-brand"><span>MR</span><div><b>MUNDEER RADIO</b><small>STREAMING MEMORIES SINCE 2011</small></div></a>
-        <div className="trip-route"><i /> CHANDIGARH <span>→</span> THE LONG WAY HOME</div>
-        <div className="trip-frequency"><small>LIVE FREQUENCY</small><b>{music.currentStation.frequency.toFixed(1)}</b><span>FM</span></div>
+        <a href="#pickup" className="trip-brand"><span>MR</span><div><b>MUNDEER RADIO</b><small>REFERENCE MUSIC SYSTEM · 2011</small></div></a>
+        <div className="trip-route"><i /> CHANDIGARH <span>—</span> THE LONG WAY HOME</div>
+        <div className="trip-frequency"><small>SINGLE FREQUENCY</small><b>{music.currentStation.frequency.toFixed(1)}</b><span>FM</span></div>
       </header>
 
       <nav className="chapter-dots" aria-label="Journey chapters">
@@ -146,35 +118,32 @@ function RoadTrip() {
         ))}
       </nav>
 
-      <div className="road-hud left"><small>TRIP</small><b>{String(14 + activeChapter * 7).padStart(2, "0")}.8 KM</b><span>PB · 2011</span></div>
-      <div className="road-hud right"><small>NOW PLAYING</small><b>{music.currentTrack.title}</b><span>{music.currentTrack.artist}</span></div>
-
       <section className={`ride-entry ${started ? "is-hidden" : ""}`} aria-hidden={started}>
         <div className="entry-copy">
           <p>CHANDIGARH · WINTER 2011</p>
-          <h1>The car is here.<br /><em>Passenger seat is empty.</em></h1>
-          <span>A white hatchback. Black alloys. A glovebox full of songs.<br />Take the aux and choose the first track.</span>
-          <button onClick={beginRide}><i>▶</i><b>START THE RIDE</b><small>HEADPHONES RECOMMENDED</small></button>
+          <h1>The road is waiting.<br /><em>Your song is already cued.</em></h1>
+          <span>A white hatchback, a glovebox of classics, and one beautifully simple radio.<br />Settle in. The first track starts when you press power.</span>
+          <button onClick={beginRide}><i /><b>POWER ON</b><small>HEADPHONES RECOMMENDED</small></button>
         </div>
-        <div className="entry-stamp"><span>PB</span><b>10</b><small>2011</small></div>
+        <div className="entry-plaque"><span>REFERENCE</span><b>MR–11</b><small>CHANDIGARH · INDIA</small></div>
       </section>
 
       <div className="chapter-scroll">
         {chapters.map((chapter, index) => (
-          <section id={chapter.id} className={`drive-chapter ${index % 2 ? "align-right" : "align-left"}`} key={chapter.id}>
+          <section id={chapter.id} className={`drive-chapter ${index % 2 ? "align-right" : "align-left"} ${activeChapter === index ? "is-active" : ""}`} key={chapter.id}>
             <article className="chapter-card">
               <div className="chapter-label"><span>{chapter.count}</span><i />{chapter.place}</div>
               <h2>{chapter.title}</h2>
               <p>{chapter.body}</p>
               {chapter.memory}
-              {index === 0 && <div className="scroll-note">SCROLL TO DRIVE <span>↓</span></div>}
-              {index === chapters.length - 1 && <button className="replay-song" onClick={() => music.selectTrack("brown-rang")}>PLAY BROWN RANG AGAIN ↺</button>}
+              {index === 0 && <div className="scroll-note">CONTINUE THE JOURNEY <span>↓</span></div>}
+              {index === chapters.length - 1 && <button className="replay-song" onClick={() => music.selectTrack("brown-rang")}>PLAY BROWN RANG AGAIN</button>}
             </article>
           </section>
         ))}
       </div>
 
-      <DrivePlayer />
+      <HiFiPlayer expanded={playerExpanded} onExpandedChange={setExpanded} />
     </main>
   );
 }
