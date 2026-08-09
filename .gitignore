@@ -1,0 +1,43 @@
+# Dependencies
+/node_modules/
+/.pnp/
+.pnp.*
+
+# Framework output
+/.next/
+/out/
+/dist/
+
+# Test and build reports
+/coverage/
+*.tsbuildinfo
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local tooling
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Hosting state
+.vercel/
+.wrangler/
+
+# Temporary files
+/tmp/
+/work/
